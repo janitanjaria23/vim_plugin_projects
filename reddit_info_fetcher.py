@@ -1,12 +1,8 @@
 # coding=utf-8
-# the vim module contains everything we need to interface with vim from
-# python. We need urllib2 for the web service consumer.
 import vim, urllib2
 # we need json for parsing the response
 import json
 
-# we define a timeout that we'll use in the API call. We don't want
-# users to wait much.
 TIMEOUT = 20
 URL = "http://reddit.com/.json"
 
@@ -17,17 +13,12 @@ try:
 
     posts = json_response.get("data", "").get("children", "")
 
-    # vim.current.buffer is the current buffer. It's list-like object.
-    # each line is an item in the list. We can loop through them delete
-    # them, alter them etc.
-    # Here we delete all lines in the current buffer
     del vim.current.buffer[:]
 
-    # Here we append some lines above. Aesthetics.
     vim.current.buffer[0] = 80*"-"
 
     for post in posts:
-        # In the next few lines, we get the post details
+        # we get the post details
         post_data = post.get("data", {})
         up = post_data.get("ups", 0)
         down = post_data.get("downs", 0)
@@ -37,14 +28,15 @@ try:
         url = post_data.get("url").encode("utf-8")
         comments = post_data.get("num_comments")
 
-        # And here we append line by line to the buffer.
-        # First the upvotes
-        vim.current.buffer.append("↑ %s"%up)
-        # Then the title and the url
-        vim.current.buffer.append("    %s [%s]"%(title, url,))
-        # Then the downvotes and number of comments
-        vim.current.buffer.append("↓ %s    | comments: %s [%s]"%(down, comments, permalink,))
-        vim.current.buffer.append(80*"-")
+        if len(vim.current.buffer) < 25:
+            # And here we append line by line to the buffer.
+            # First the upvotes
+            vim.current.buffer.append("↑ %s"%up)
+            # Then the title and the url
+            vim.current.buffer.append("    %s [%s]"%(title, url,))
+            # Then the downvotes and number of comments
+            vim.current.buffer.append("↓ %s    | comments: %s [%s]"%(down, comments, permalink,))
+            vim.current.buffer.append(80*"-")
 
 except Exception, e:
     print e
