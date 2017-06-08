@@ -15,7 +15,8 @@ def gmail_checker(username, password):
 
 def main():
     messages, unseen = gmail_checker('username@gmail.com', 'password')
-    print "%i messages, %i unseen" % (messages, unseen)
+    print "Total Messages: %d" % messages
+    print "Unseen Messages: %d" % unseen
 
 
 main()
